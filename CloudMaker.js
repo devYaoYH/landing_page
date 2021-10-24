@@ -67,7 +67,7 @@ function CloudMaker() {
   // Explode a cloud
   function explodeCloud(cloud){
     cloud.setAnimationFn(function(obj){
-      return Atranslate(Ascale(obj,makePoint(0.97, 0.97)), obj.velocity);
+      return Atranslate(Ascale(obj,makePoint(0.99, 0.99)), obj.velocity);
     });
     cloud.children.forEach((child) => {
       child.velocity = makeVector(Math.random()-0.5, Math.random()-0.5);
