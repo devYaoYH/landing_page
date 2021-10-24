@@ -58,10 +58,12 @@
       function dissapateCloud(){
         if (!PLAY_ANIMATION) return;
         clouds.forEach(function(cloud){
+          if (cloud.isDissapated === true) return;
           const mouse_obj = AnimationObject();
           mouse_obj.location = mouse_location;
           const did_intersect = cloud.shape.getCollider().doesIntersect(Cpoint(mouse_obj));
           if (did_intersect === true){
+            cloud.isDissapated = true;
             cloud_maker.explodeCloud(cloud);
             setTimeout(function(){
               clouds = clouds.filter((c) => c !== cloud);
