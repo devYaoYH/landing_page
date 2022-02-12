@@ -226,6 +226,39 @@ function Dellipse(animationObject, radiusX, radiusY, rotation, startAngle, endAn
   };
 }
 
+function Drectangle(animationObject, upperLeftX, upperLeftY, width, height){
+  return {
+    ...DrawableObject(animationObject),
+    draw: function(ctx, offset = makePoint(0,0)){
+      const loc = this.getLocation();
+      const scale = this.getScale();
+      const rgba = this.getRgba();
+      ctx.fillStyle = `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${rgba[3]})`;
+      ctx.beginPath();
+      ctx.rect(loc.x+offset.x+upperLeftX, loc.y+offset.y+upperLeftY, width*scale.x, height*scale.y);
+      ctx.fill();
+    }
+  }
+}
+
+function Darc(animationObject, radiusX, radiusY, rotation, startAngle, endAngle, counterclockwise, width=1){
+  return {
+    ...DrawableObject(animationObject),
+    draw: function(ctx, offset = makePoint(0,0)){
+      const loc = this.getLocation();
+      const scale = this.getScale();
+      const rgba = this.getRgba();
+      const prev_lineWidth = ctx.lineWidth;
+      ctx.lineWidth = width;
+      ctx.fillStyle = `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${rgba[3]})`;
+      ctx.beginPath();
+      ctx.ellipse(loc.x+offset.x, loc.y+offset.y, radiusX*scale.x, radiusY*scale.y, rotation, startAngle, endAngle, counterclockwise);
+      ctx.stroke();
+      ctx.lineWidth = prev_lineWidth;
+    }
+  };
+}
+
 // Constructor for animation object
 const AnimationObject = (function(parent = null){
   animationObject = {

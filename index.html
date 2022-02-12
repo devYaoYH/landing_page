@@ -22,6 +22,7 @@
       }
       [CONSOLE CMD] => {
           'SHOW_DEMO = true': render animation demo object, a shape that orbits around mouse location.
+          'flag_enable_night_mode = true': overlay a night-time mode.
       }
       `;
       console.log(msg);
@@ -137,14 +138,6 @@
         // Clear previous frame
         ctx.clearRect(0, 0, x_lim, y_lim);
 
-        // Draw Demo object
-        if (SHOW_DEMO) {
-          const towardsMouse = mouse_location.subPoint(demo_obj.location);
-          demo_obj.velocity = demo_obj.velocity.addVector(towardsMouse.norm().mul(0.01));
-          demo_obj.animate();
-          demo_obj.draw(ctx);
-        }
-
         // Remove clouds
         clouds = clouds.filter((cloud) => cloud_maker.isOnScreen(cloud));
 
@@ -156,6 +149,14 @@
           cloud.animate();
           cloud.draw(ctx);
         });
+
+        // Draw Demo object
+        if (SHOW_DEMO) {
+          const towardsMouse = mouse_location.subPoint(demo_obj.location);
+          demo_obj.velocity = demo_obj.velocity.addVector(towardsMouse.norm().mul(0.01));
+          demo_obj.animate();
+          demo_obj.draw(ctx);
+        }
         
         // Dark overlay (night-mode)
         if (is_night_time && flag_enable_night_mode){
