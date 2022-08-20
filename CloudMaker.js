@@ -101,5 +101,5 @@ function CloudMaker() {
     makeCloud: makeCloud,
     isOnScreen: isOnScreen,
     explodeCloud: explodeCloud,
-  }
+  };
 }

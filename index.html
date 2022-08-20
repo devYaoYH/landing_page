@@ -11,6 +11,7 @@
     <script src="CanvasAnimation.js"></script>
     <script src="DemoAnimationObject.js"></script>
     <script src="CloudMaker.js"></script>
+    <script src="GameOfLife.js"></script>
     <script>
       /* Message */
       msg = `
@@ -39,11 +40,21 @@
       const cur_hour = (new Date()).getHours();
       const is_night_time = (cur_hour >= 20 || cur_hour < 6);
 
+      // Game Objects
+      const cloud_maker = CloudMaker();
+      const game_of_life = GameOfLife();
+      const demo_obj = makeDemoAnimationObject();
+      const game_of_life_grid = AnimationObject();
+
       // Initialization
       function initialize(){
         if (is_night_time && flag_enable_night_mode){
           document.getElementById('headline').style.color = "#FFFFFF";
         }
+
+        // Set up game_of_life
+        game_of_life_grid.location = makePoint(0, window.innerHeight*0);
+        game_of_life.initialize(game_of_life_grid, window.innerWidth, window.innerHeight);
       }
 
       // Pending cursor animation
@@ -118,6 +129,10 @@
         if (canvas === null) return;
         x_lim = canvas.width = window.innerWidth;
         y_lim = canvas.height = window.innerHeight;
+
+        // Reset game_of_life
+        game_of_life_grid.location = makePoint(0, y_lim*0);
+        game_of_life.initialize(game_of_life_grid, x_lim, y_lim);
       }
       // Computes the position of mouse relative to canvas obj
       function getMousePos(canvas, evt) {
@@ -127,9 +142,6 @@
           y: evt.clientY - rect.top
         };
       }
-
-      const cloud_maker = CloudMaker();
-      const demo_obj = makeDemoAnimationObject();
       
       /* Frame Animation */
       let clouds = [];
@@ -149,6 +161,11 @@
           cloud.animate();
           cloud.draw(ctx);
         });
+
+        // Play the Game Of Life Grid
+        game_of_life.play();
+        game_of_life_grid.animate();
+        game_of_life_grid.draw(ctx);
 
         // Draw Demo object
         if (SHOW_DEMO) {
