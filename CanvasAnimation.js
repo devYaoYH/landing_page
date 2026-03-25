@@ -45,7 +45,7 @@ function makeVector(vx, vy){
     },
     // Dot product between 2D vectors
     dot: function(v){
-      return this.x*v.x + this.y*v.x;
+      return this.x*v.x + this.y*v.y;
     },
     // Unit vector representation
     norm: function(){
@@ -138,6 +138,7 @@ function Cpoint(animationObject){
       return collider.doesIntersectPoint(this);
     },
     // Point - Point intersection
+    // TODO: uses exact equality — switch to epsilon comparison if used with floats
     doesIntersectPoint: function(collider){
       return (this.getLocation().x == collider.getLocation().x && this.getLocation().y == collider.getLocation().y);
     },
@@ -165,7 +166,7 @@ function Cellipse(animationObject, radiusX, radiusY, rotation, startAngle, endAn
       return phi;
     },
     getArc: function(){
-      return (minAlpha, maxAlpha);
+      return [minAlpha, maxAlpha];
     },
     // Double Dispatch
     doesIntersect: function(collider){
@@ -261,7 +262,7 @@ function Darc(animationObject, radiusX, radiusY, rotation, startAngle, endAngle,
 
 // Constructor for animation object
 const AnimationObject = (function(parent = null){
-  animationObject = {
+  const animationObject = {
     parent: parent, // Parent object in animation hierarchy (null => canvas)
     scale: makePoint(1,1), // Size transformation scaling
     rgba: [255,255,255,1], // RGB + Opacity of object [0,1]

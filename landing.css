@@ -31,3 +31,159 @@ canvas{
   top: 0;
   left: 0;
 }
+
+/* Stamp of Approval Sticker */
+.stamp-sticker {
+  position: fixed;
+  bottom: 32px;
+  left: 24px;
+  z-index: 100;
+  cursor: pointer;
+  transform: rotate(-8deg);
+  transition: transform 0.3s ease;
+  width: 360px;
+}
+.stamp-sticker:hover {
+  transform: rotate(-4deg) scale(1.05);
+}
+.stamp-sticker.stamp-open {
+  transform: rotate(-2deg) scale(1.08);
+}
+.stamp-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 4px dashed rgba(217, 119, 87, 0.7);
+  background: rgba(250, 247, 240, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 6px;
+  box-shadow: 0 2px 12px rgba(217, 119, 87, 0.2);
+}
+.stamp-icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: -2px;
+  margin-right: 2px;
+}
+.stamp-title {
+  display: block;
+  text-align: center;
+  box-sizing: border-box;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #D97757;
+  background: rgba(250, 247, 240, 0.95);
+  border: 2px solid rgba(217, 119, 87, 0.5);
+  border-radius: 4px;
+  padding: 3px 10px;
+  box-shadow: 0 1px 6px rgba(217, 119, 87, 0.15);
+}
+.stamp-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+  background: rgba(250, 247, 240, 0.97);
+  border: 2px solid rgba(217, 119, 87, 0.35);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 0 10px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 10px;
+  color: #8B4D3B;
+  line-height: 1.5;
+}
+.stamp-open .stamp-details {
+  max-height: 300px;
+  padding: 8px 10px;
+}
+.stamp-details ul {
+  margin: 0;
+  padding-left: 14px;
+}
+.stamp-details li {
+  margin-bottom: 4px;
+}
+
+/* Debug Panel */
+.debug-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 101;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.debug-toggle:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: rotate(45deg);
+}
+.debug-panel {
+  position: fixed;
+  bottom: 70px;
+  right: 24px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 0;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.75);
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+}
+.debug-panel.debug-open {
+  max-height: 200px;
+  opacity: 1;
+  padding: 10px 14px;
+}
+.debug-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(0, 0, 0, 0.35);
+  margin-bottom: 8px;
+}
+.debug-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 3px 0;
+}
+.debug-row input {
+  accent-color: #D97757;
+  cursor: pointer;
+}
+.debug-btn {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 5px 10px;
+  background: rgba(217, 119, 87, 0.2);
+  border: 1px solid rgba(217, 119, 87, 0.4);
+  border-radius: 4px;
+  color: #D97757;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.debug-btn:hover {
+  background: rgba(217, 119, 87, 0.35);
+}

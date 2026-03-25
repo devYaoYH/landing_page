@@ -75,6 +75,53 @@ function CloudMaker() {
         return Atranslate(Aopacity(obj, 0.995), obj.velocity);
       });
     });
+    // 5% chance birds flutter out, count weighted toward 1
+    if (Math.random() < 0.05) {
+      const count = Math.ceil(Math.pow(Math.random(), 2.5) * 5);
+      for (let i = 0; i < count; i++) {
+        spawnBird(cloud.location);
+      }
+    }
+  }
+
+  // Spawn a fluttering bird at a position
+  function spawnBird(pos){
+    const bird = AnimationObject();
+    bird.location = makePoint(pos.x, pos.y);
+    bird.rgba = [40, 40, 40, 1];
+    const dir = Math.random() < 0.5 ? -1 : 1;
+    const speed = 1.5 + Math.random();
+    bird.velocity = makeVector(dir * speed, -(0.5 + Math.random()));
+    let wingPhase = Math.random() * Math.PI * 2;
+    const wingSize = 6 + Math.random() * 4;
+    // Bird is drawn as two flapping wing arcs + body
+    bird.shape = {
+      ...DrawableObject(bird),
+      draw: function(ctx, offset){
+        const loc = bird.location;
+        const x = loc.x + offset.x;
+        const y = loc.y + offset.y;
+        const rgba = bird.rgba;
+        const flap = Math.sin(wingPhase) * 0.6;
+        ctx.strokeStyle = `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${rgba[3]})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        // Left wing
+        ctx.moveTo(x, y);
+        ctx.quadraticCurveTo(x - wingSize * 0.6, y - wingSize * (0.5 + flap), x - wingSize, y - wingSize * flap * 0.3);
+        // Right wing
+        ctx.moveTo(x, y);
+        ctx.quadraticCurveTo(x + wingSize * 0.6, y - wingSize * (0.5 + flap), x + wingSize, y - wingSize * flap * 0.3);
+        ctx.stroke();
+      }
+    };
+    bird.setAnimationFn(function(obj){
+      wingPhase += 0.15;
+      // Slight sinusoidal path
+      obj.velocity = makeVector(obj.velocity.x, obj.velocity.y + Math.sin(wingPhase * 0.5) * 0.02);
+      return Atranslate(obj, obj.velocity);
+    });
+    birds.push(bird);
   }
 
   return {
@@ -101,5 +148,6 @@ function CloudMaker() {
     makeCloud: makeCloud,
     isOnScreen: isOnScreen,
     explodeCloud: explodeCloud,
+    spawnBird: spawnBird,
   };
 }
