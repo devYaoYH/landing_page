@@ -124,9 +124,10 @@
           headline.style.display = 'none';
         }, 400);
 
-        // Blog appears as hero finishes collapsing
+        // Blog appears as hero finishes collapsing; mount polar city once visible
         setTimeout(() => {
           blog.classList.add('visible');
+          if (window.__mountPolarCity) window.__mountPolarCity();
         }, 700);
       }
 
@@ -238,6 +239,7 @@
     </div>
 
     <div id="blog">
+      <div id="polar-city-bg"></div>
 
       <!-- Sticky nav -->
       <nav class="blog-nav-bar">
@@ -345,9 +347,9 @@
           <div class="section-rule"></div>
           <div class="about-grid">
             <div class="about-body">
-              <p class="bear-corner bear-tl">I studied <strong>Symbolic Systems at Stanford</strong> — an interdisciplinary program spanning computation, cognition, linguistics, and philosophy. Before that I worked as a software engineer at <strong>Google</strong>. The throughline has always been: how do minds (human and artificial) represent and act on the world?</p>
-              <p class="bear-corner bear-br">My work sits at the intersection of <strong>cognitive science</strong>, <strong>machine learning</strong>, and <strong>systems engineering</strong>. On the research side I think about human causal reasoning, decision-making under uncertainty, and what it takes to build AI systems that are reliably interpretable. On the engineering side I care about performance — from GPU kernel optimization to interactive browser graphics.</p>
-              <p class="bear-corner bear-tr">I'm drawn to problems where the theoretical and the practical are in genuine tension: why does a model behave this way, what can we actually measure, and how do we build something a person would want to use? This site is a sketchpad for that kind of thinking.</p>
+              <p>I studied <strong>Symbolic Systems at Stanford</strong> — an interdisciplinary program spanning computation, cognition, linguistics, and philosophy. Before that I worked as a software engineer at <strong>Google</strong>. The throughline has always been: how do minds (human and artificial) represent and act on the world?</p>
+              <p>My work sits at the intersection of <strong>cognitive science</strong>, <strong>machine learning</strong>, and <strong>systems engineering</strong>. On the research side I think about human causal reasoning, decision-making under uncertainty, and what it takes to build AI systems that are reliably interpretable. On the engineering side I care about performance — from GPU kernel optimization to interactive browser graphics.</p>
+              <p>I'm drawn to problems where the theoretical and the practical are in genuine tension: why does a model behave this way, what can we actually measure, and how do we build something a person would want to use? This site is a sketchpad for that kind of thinking.</p>
             </div>
             <div class="about-sidebar">
               <div class="about-block">
@@ -398,6 +400,25 @@
       </footer>
 
     </div>
+
+    <script type="module">
+      import { mountPolarCity, preloadAssets } from './js/polar_city/main.js';
+
+      const POLAR_CITY_OPTS = {
+        assetsBase: 'img/polar_city',
+        poseScalesUrl: '/js/polar_city/pose_scales.json',
+        asBackground: false,
+        backgroundAlpha: 0,
+        scale: 0.5,
+        worldSize: { cols: 40, rows: 40 },
+      };
+
+      // Start streaming assets immediately while the hero animation plays.
+      const assetsReady = preloadAssets(POLAR_CITY_OPTS);
+
+      // Mount once the blog is revealed — assets will already be cached.
+      window.__mountPolarCity = () => assetsReady.then(() => mountPolarCity('#polar-city-bg', POLAR_CITY_OPTS));
+    </script>
 
     <script>
       function showSection(name, el) {

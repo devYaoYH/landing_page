@@ -51,6 +51,7 @@ export class Renderer {
         if (!tex) continue;
         const s = new PIXI.Sprite(tex);
         s.anchor.set(CONFIG.anchor.tile.x, CONFIG.anchor.tile.y);
+        s.scale.set(CONFIG.scale);
         const p = worldToScreen(x, y);
         s.x = p.x; s.y = p.y;
         this.tilesLayer.addChild(s);
@@ -64,6 +65,7 @@ export class Renderer {
       if (!tex) continue;
       const s = new PIXI.Sprite(tex);
       s.anchor.set(CONFIG.anchor.building.x, CONFIG.anchor.building.y);
+      s.scale.set(CONFIG.scale);
       const p = worldToScreen(b.x, b.y);
       s.x = p.x; s.y = p.y;
       s.zIndex = depth(b.x, b.y, 1);

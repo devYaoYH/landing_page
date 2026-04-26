@@ -16,7 +16,7 @@ export class AgentView {
     this.walk = new PIXI.AnimatedSprite(walkFrames());
     this.walk.animationSpeed = 0.12;  // ~7 fps at 60fps ticker
     this.walk.anchor.set(CONFIG.anchor.agent.x, CONFIG.anchor.agent.y);
-    this.walk._baseScale = CONFIG.poseScales.walk ?? 1;
+    this.walk._baseScale = (CONFIG.poseScales.walk ?? 1) * CONFIG.scale;
     this.walk.scale.set(this.walk._baseScale);
     this.walk.play();
 
@@ -43,7 +43,7 @@ export class AgentView {
         sprite = new PIXI.Sprite(frames[frames.length - 1]);
       }
       sprite.anchor.set(CONFIG.anchor.agent.x, CONFIG.anchor.agent.y);
-      sprite._baseScale = CONFIG.poseScales[pose] ?? 1;
+      sprite._baseScale = (CONFIG.poseScales[pose] ?? 1) * CONFIG.scale;
       sprite.scale.set(sprite._baseScale);
       sprite.visible = false;
       this.poses[pose] = sprite;

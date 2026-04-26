@@ -449,61 +449,28 @@ h1 {
 }
 
 /* ════════════════════════════════════════════
-   POLAR BEAR PEEKS
+   POLAR CITY BACKGROUND
    ════════════════════════════════════════════ */
-
-/* Bear SVG encoded inline — white bear face, black eyes + nose */
-.bear-corner {
+#section-about {
   position: relative;
 }
-.bear-corner::after {
-  content: '';
+#polar-city-bg {
   position: absolute;
-  width: 52px;
-  height: 52px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3C!-- left ear --%3E%3Ccircle cx='26' cy='32' r='16' fill='%23f0ede8' stroke='%23c8c0b4' stroke-width='2'/%3E%3Ccircle cx='26' cy='32' r='9' fill='%23e8d8cc'/%3E%3C!-- right ear --%3E%3Ccircle cx='74' cy='32' r='16' fill='%23f0ede8' stroke='%23c8c0b4' stroke-width='2'/%3E%3Ccircle cx='74' cy='32' r='9' fill='%23e8d8cc'/%3E%3C!-- head --%3E%3Ccircle cx='50' cy='58' r='38' fill='%23f0ede8' stroke='%23c8c0b4' stroke-width='2'/%3E%3C!-- snout --%3E%3Cellipse cx='50' cy='70' rx='14' ry='10' fill='%23e8d8cc'/%3E%3C!-- nose --%3E%3Cellipse cx='50' cy='65' rx='7' ry='5' fill='%231a1a2e'/%3E%3C!-- eyes --%3E%3Ccircle cx='36' cy='52' r='5' fill='%231a1a2e'/%3E%3Ccircle cx='64' cy='52' r='5' fill='%231a1a2e'/%3E%3C!-- eye shine --%3E%3Ccircle cx='38' cy='50' r='1.5' fill='white'/%3E%3Ccircle cx='66' cy='50' r='1.5' fill='white'/%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
-  opacity: 0.82;
+  overflow: hidden;
+  opacity: 0.18;
 }
-
-/* top-left: peeks from top-left corner, tilted left */
-.bear-tl::after {
-  top: -28px;
-  left: -28px;
-  transform: rotate(-25deg);
-  transform-origin: bottom right;
+#polar-city-bg canvas {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  background: transparent !important;
 }
-.bear-tl:hover::after {
-  transform: rotate(-10deg) scale(1.12);
-  opacity: 1;
-}
-
-/* bottom-right: peeks from bottom-right, tilted right */
-.bear-br::after {
-  bottom: -28px;
-  right: -28px;
-  transform: rotate(20deg);
-  transform-origin: top left;
-}
-.bear-br:hover::after {
-  transform: rotate(8deg) scale(1.12);
-  opacity: 1;
-}
-
-/* top-right: peeks from top-right, tilted right */
-.bear-tr::after {
-  top: -28px;
-  right: -28px;
-  transform: rotate(22deg);
-  transform-origin: bottom left;
-}
-.bear-tr:hover::after {
-  transform: rotate(10deg) scale(1.12);
-  opacity: 1;
+#section-about .spine {
+  position: relative;
+  z-index: 1;
 }
 
 /* ════════════════════════════════════════════

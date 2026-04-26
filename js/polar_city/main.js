@@ -6,6 +6,25 @@ import { Renderer } from './render/Renderer.js';
 import { PolarBear } from './agents/PolarBear.js';
 import { save as saveWorld, load as loadWorld } from './world/persistence.js';
 
+// Kick off asset loading without mounting anything — call this early to warm
+// the PIXI asset cache so mountPolarCity can start rendering immediately.
+export async function preloadAssets(options = {}) {
+  if (options.assetsBase) CONFIG.assetsBase = options.assetsBase;
+  try {
+    const url = options.poseScalesUrl ?? '/js/polar_city/pose_scales.json';
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      CONFIG.poseScales = { ...CONFIG.poseScales, ...(data.pose_scales ?? {}) };
+      CONFIG.actionPose = { ...CONFIG.actionPose, ...(data.action_pose ?? {}) };
+      CONFIG.poseLoop   = { ...CONFIG.poseLoop,   ...(data.pose_loop   ?? {}) };
+    }
+  } catch (err) {
+    console.warn('[polar_city] pose_scales.json preload failed', err);
+  }
+  return loadAssets();
+}
+
 // Mount the polar-city canvas into `target` and start the sim loop.
 //
 //   target                  — element or CSS selector (required)
@@ -24,6 +43,10 @@ export async function mountPolarCity(target, options = {}) {
 
   if (options.assetsBase)  CONFIG.assetsBase = options.assetsBase;
   if (options.worldSize)   CONFIG.world      = { ...CONFIG.world, ...options.worldSize };
+  if (options.scale != null) {
+    CONFIG.scale = options.scale;
+    CONFIG.tile  = { w: CONFIG.baseTile.w * options.scale, h: CONFIG.baseTile.h * options.scale };
+  }
 
   // Load shared pose-scale config. Single source of truth across JS + the
   // Python preview script; fall back to CONFIG defaults if the fetch fails.
@@ -44,6 +67,7 @@ export async function mountPolarCity(target, options = {}) {
   await app.init({
     resizeTo: options.asBackground ? window : el,
     background: options.background ?? CONFIG.background,
+    backgroundAlpha: options.backgroundAlpha ?? 1,
     antialias: true,
     resolution: options.resolution ?? Math.min(window.devicePixelRatio || 1, 1.5),
     autoDensity: true,
@@ -68,7 +92,10 @@ export async function mountPolarCity(target, options = {}) {
 
   // Try to rehydrate map + buildings from a previous session. Agents don't
   // persist — they spawn fresh each load so behavior code can evolve safely.
-  const saved = options.freshWorld ? null : loadWorld();
+  let saved = options.freshWorld ? null : loadWorld();
+  if (saved && (saved.cols !== CONFIG.world.cols || saved.rows !== CONFIG.world.rows)) {
+    saved = null;
+  }
   const world = saved ? World.fromJSON(saved) : new World({ size: CONFIG.world });
 
   const renderer = new Renderer(app, world);

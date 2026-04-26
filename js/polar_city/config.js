@@ -4,8 +4,10 @@ export const CONFIG = {
   // so it resolves the same regardless of which HTML page imports us.
   assetsBase: '/img/polar_city',
 
-  // Isometric top-face diamond dimensions (width:height = 2:1).
-  // Tile sprites are ~100x77 px; the diamond top face is roughly 100x50.
+  // Native tile dimensions at scale 1.0 — do not override; set scale instead.
+  baseTile: { w: 80, h: 48 },
+
+  // Isometric top-face diamond dimensions — derived from baseTile * scale.
   tile: { w: 80, h: 48 },
 
   // Sprite anchor tuning — where the "world origin" sits inside each sprite.
@@ -28,4 +30,8 @@ export const CONFIG = {
 
   // Sky background — matches the original sprite sheet color.
   background: 0x70b9fd,
+
+  // Uniform sprite scale — set automatically by mountPolarCity from tile size.
+  // 1.0 = native resolution (tile.w = 80); 0.5 = half-size (tile.w = 40).
+  scale: 1,
 };
