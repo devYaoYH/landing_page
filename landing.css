@@ -146,6 +146,7 @@ h1 {
   margin-right: auto;
   padding-left: var(--spine-pad);
   padding-right: var(--spine-pad);
+  container-type: inline-size;
 }
 
 /* ── Sticky nav ── */
@@ -494,7 +495,7 @@ h1 {
 }
 .research-link:hover { border-bottom-color: var(--color-cyan); }
 
-@media (max-width: 720px) {
+@container (max-width: 620px) {
   .project-timeline { gap: 40px; }
   .project-timeline::before { display: none; }
   .project-entry { grid-template-columns: 1fr; }
@@ -692,7 +693,7 @@ a.project-media--linked:hover img {
   gap: 48px;
   align-items: start;
 }
-@media (max-width: 720px) {
+@container (max-width: 620px) {
   .about-grid {
     grid-template-columns: 1fr;
     gap: 32px;
