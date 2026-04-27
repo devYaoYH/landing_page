@@ -1,3 +1,27 @@
+/*
+ * CanvasAnimation.js — lightweight 2D scene graph for HTML Canvas
+ *
+ * Usage:
+ *   1. Create animation objects with makeAnimationObject(location, drawFn, animateFn).
+ *      drawFn(ctx, location) paints the object; animateFn(dt) updates its state.
+ *
+ *   2. Compose a scene by nesting objects via makeGroup([...children]).
+ *      Transforms (Atranslate, Ascale, Arotate) propagate down the tree each frame.
+ *
+ *   3. Run the loop:
+ *        const scene = makeGroup([obj1, obj2, ...]);
+ *        function loop(ts) {
+ *          ctx.clearRect(0, 0, canvas.width, canvas.height);
+ *          scene.animate(delta);
+ *          scene.draw(ctx);
+ *          requestAnimationFrame(loop);
+ *        }
+ *        requestAnimationFrame(loop);
+ *
+ *   4. Collision detection: use checkCollision(shapeA, shapeB) for circle/rect pairs.
+ *      Attach an onCollide(other) handler to an object to respond to hits.
+ */
+
 // 2D Mathematical Objects
 function makePoint(ix, iy){
   return {

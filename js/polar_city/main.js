@@ -90,13 +90,28 @@ export async function mountPolarCity(target, options = {}) {
 
   await loadAssets();
 
+  // Build a screen-aligned rectangular world: rasterize a 45°-rotated
+  // rectangle into the iso grid so the world fills the canvas exactly,
+  // plus a buffer so agents have room to walk in from off-screen.
+  const SHAPE_BUFFER = options.shapeBuffer ?? 4;     // extra grid units per side
+  const halfU = (app.screen.width  / CONFIG.tile.w) + SHAPE_BUFFER;
+  const halfV = (app.screen.height / CONFIG.tile.h) + SHAPE_BUFFER;
+  const N = Math.ceil(halfU + halfV) + 2;            // bounding box side
+  CONFIG.world = { cols: N, rows: N };
+  const shape = { halfU, halfV };
+
   // Try to rehydrate map + buildings from a previous session. Agents don't
   // persist — they spawn fresh each load so behavior code can evolve safely.
   let saved = options.freshWorld ? null : loadWorld();
-  if (saved && (saved.cols !== CONFIG.world.cols || saved.rows !== CONFIG.world.rows)) {
+  if (saved && (
+        saved.cols !== N || saved.rows !== N ||
+        saved.shape?.halfU !== halfU || saved.shape?.halfV !== halfV
+      )) {
     saved = null;
   }
-  const world = saved ? World.fromJSON(saved) : new World({ size: CONFIG.world });
+  const world = saved
+    ? World.fromJSON(saved)
+    : new World({ size: CONFIG.world, shape });
 
   const renderer = new Renderer(app, world);
 

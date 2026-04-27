@@ -46,6 +46,7 @@ export class Renderer {
   buildTiles() {
     for (let y = 0; y < this.world.rows; y++) {
       for (let x = 0; x < this.world.cols; x++) {
+        if (!this.world.isInside(x, y)) continue;
         const idx = this.world.tileAt(x, y);
         const tex = PIXI.Assets.get(`tile_${pad2(idx)}`);
         if (!tex) continue;

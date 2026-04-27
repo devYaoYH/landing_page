@@ -16,8 +16,6 @@
   },
   "action_pose": {
     "action_01": "sit",
-    "action_02": "sit",
-    "action_12": "sit",
     "action_13": "sit",
     "action_03": "chocolate",
     "action_16": "chocolate",

@@ -69,6 +69,13 @@ canvas {
   top: 0;
   left: 0;
 }
+/* During expandPage(), a #polar-stage div is inserted behind the cloud
+   canvas. It hosts the polar-city PIXI canvas; stretch it across the hero so
+   the PIXI canvas resizes to fill the banner. */
+#hero #polar-stage {
+  position: absolute;
+  inset: 0;
+}
 h1 {
   font-family: var(--font-mono);
   font-size: 3em;
@@ -205,6 +212,22 @@ h1 {
 }
 .section-title span { color: var(--color-cyan); }
 
+.section-heading-row {
+  margin-bottom: 40px;
+}
+.profile-pic {
+  display: block;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 25%;
+  border: none;
+  margin: 0 auto 32px;
+  -webkit-mask-image: radial-gradient(circle, black calc(90% - 5px), transparent 50%);
+  mask-image: radial-gradient(circle, black calc(90% - 5px), transparent 50%);
+}
+
 /* ── Divider ── */
 .section-rule {
   width: 100%;
@@ -293,24 +316,193 @@ h1 {
 /* ════════════════════════════════════════════
    PROJECTS SECTION
    ════════════════════════════════════════════ */
-.project-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+/* Timeline: a central vertical spine with entries alternating left / right.
+   Three-column grid (left content | spine rail | right content). Odd entries
+   land in the left column, even in the right; both share the spine middle. */
+/* Parent draws the central rail; each entry is its own 3-col grid row so
+   marker and title sit on the same horizontal line. */
+.project-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  position: relative;
+}
+.project-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: var(--color-border);
+  transform: translateX(-50%);
 }
 
-.project-card {
+.project-entry {
+  display: grid;
+  grid-template-columns: 1fr 48px 1fr;
+  align-items: start;
+}
+.project-entry .project-marker {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 6px;
+  position: relative;
+  z-index: 1;
+}
+.project-entry .project-marker::before {
+  content: '';
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
   background: var(--color-white);
-  border: 1px solid var(--color-border);
-  padding: 28px 24px;
+  border: 2px solid var(--color-cyan);
+  margin-bottom: 6px;
+}
+.project-entry .project-content {
+  grid-row: 1;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.project-card:hover {
-  border-color: var(--color-cyan);
-  box-shadow: 0 4px 20px rgba(26, 126, 188, 0.08);
+
+/* Alternate sides: odd left, even right. Image (if present) lands on the
+   opposite column from the text, hugging the spine. */
+.project-entry:nth-child(odd) .project-content {
+  grid-column: 1;
+  text-align: right;
+  align-items: flex-end;
+}
+.project-entry:nth-child(odd) .project-media-cell {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: start;
+}
+.project-entry:nth-child(even) .project-content {
+  grid-column: 3;
+  text-align: left;
+  align-items: flex-start;
+}
+.project-entry:nth-child(even) .project-media-cell {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: end;
+}
+.project-media-cell {
+  padding-top: 6px;
+  max-width: 100%;
+}
+
+.entry-date {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+}
+
+/* ════════════════════════════════════════════
+   RESEARCH SECTION — question-led journal
+   ════════════════════════════════════════════ */
+.research-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+}
+.research-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  padding-left: 28px;
+  border-left: 2px solid var(--color-border);
+}
+.research-entry::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 14px;
+  width: 8px;
+  height: 8px;
+  background: var(--color-cyan);
+  border-radius: 50%;
+}
+.research-question {
+  font-family: 'Georgia', 'Source Serif Pro', serif;
+  font-size: clamp(1.15rem, 2.4vw, 1.55rem);
+  line-height: 1.3;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--color-navy);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.research-meta {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-cyan);
+  margin-top: -4px;
+}
+.research-prose {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--color-charcoal);
+  margin: 0;
+  max-width: 62ch;
+}
+.research-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 4px;
+}
+.research-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  color: var(--color-muted);
+}
+.research-tag::before { content: '#'; opacity: 0.6; margin-right: 1px; }
+.research-link {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-cyan);
+  text-decoration: none;
+  align-self: flex-start;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+  margin-top: 4px;
+}
+.research-link:hover { border-bottom-color: var(--color-cyan); }
+
+@media (max-width: 720px) {
+  .project-entry { grid-template-columns: 32px 1fr; }
+  .project-timeline::before { left: 16px; transform: none; }
+  .project-entry .project-marker { grid-column: 1; grid-row: 1; }
+  .project-entry .project-content,
+  .project-entry .project-media-cell {
+    grid-column: 2;
+    text-align: left;
+    align-items: flex-start;
+    justify-self: stretch;
+  }
+  .project-entry .project-content { grid-row: 1; }
+  .project-entry .project-media-cell { grid-row: 2; padding-top: 12px; }
 }
 
 .project-index {
@@ -359,21 +551,128 @@ h1 {
   padding: 2px 6px;
 }
 
-.project-link {
+.project-media {
+  background: var(--color-frost);
+  border: 1px solid var(--color-border);
+  max-width: 100%;
+  position: relative;
+}
+.project-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+a.project-media--linked {
+  display: block;
+  cursor: pointer;
+}
+a.project-media--linked img {
+  transition: opacity 0.15s ease;
+}
+a.project-media--linked:hover img {
+  opacity: 0.85;
+}
+.project-entry:nth-child(odd) .project-media-cell:has(.project-media--video),
+.project-entry:nth-child(even) .project-media-cell:has(.project-media--video) {
+  justify-self: stretch;
+}
+.project-media--video {
+  width: 100%;
+  background: #000;
+  padding-top: 56.25%; /* 16:9 */
+}
+.project-media--video iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+/* "Claude Approved" sticker — overlays the project media, bottom-left,
+   tilted like a stamp. Click to expand and reveal bullet details. */
+.stamp-sticker {
+  position: absolute;
+  top: 12px;
+  left: -20px;
+  z-index: 2;
+  width: 260px;
+  cursor: pointer;
+  transform: rotate(-8deg);
+  transform-origin: top left;
+  transition: transform 0.3s ease;
+}
+.stamp-sticker:hover { transform: rotate(-4deg) scale(1.04); }
+.stamp-sticker.stamp-open { transform: rotate(-2deg) scale(1.06); }
+
+.stamp-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px dashed rgba(217, 119, 87, 0.7);
+  background: rgba(250, 247, 240, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 4px;
+  box-shadow: 0 2px 10px rgba(217, 119, 87, 0.18);
+}
+.stamp-badge svg { width: 22px; height: 22px; }
+
+.stamp-icon {
+  width: 13px;
+  height: 13px;
+  vertical-align: -2px;
+  margin-right: 3px;
+}
+.stamp-title {
+  display: block;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #D97757;
+  background: rgba(250, 247, 240, 0.95);
+  border: 2px solid rgba(217, 119, 87, 0.5);
+  border-radius: 4px;
+  padding: 3px 8px;
+  box-shadow: 0 1px 5px rgba(217, 119, 87, 0.15);
+}
+.stamp-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+  background: rgba(250, 247, 240, 0.97);
+  border: 2px solid rgba(217, 119, 87, 0.35);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 0 10px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: #8B4D3B;
+  line-height: 1.5;
+}
+.stamp-open .stamp-details {
+  max-height: 320px;
+  padding: 6px 10px 8px;
+}
+.stamp-details ul { margin: 0; padding-left: 14px; }
+.stamp-details li { margin: 3px 0; }
+
+.project-offsite {
   font-family: var(--font-mono);
   font-size: 0.62rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-navy);
+  color: var(--color-cyan);
   text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 4px;
-  transition: color 0.15s;
+  align-self: flex-start;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
 }
-.project-link::after { content: '→'; }
-.project-link:hover { color: var(--color-cyan); }
+.project-offsite:hover { border-bottom-color: var(--color-cyan); }
 
 /* ════════════════════════════════════════════
    ABOUT SECTION
@@ -402,6 +701,23 @@ h1 {
 }
 
 .about-sidebar {}
+
+/* Inline body links — styled to match .project-offsite */
+.about-body a,
+.about-sidebar a {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-cyan);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+.about-body a:hover,
+.about-sidebar a:hover {
+  border-bottom-color: var(--color-cyan);
+}
 
 .about-block {
   margin-bottom: 32px;

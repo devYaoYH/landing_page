@@ -8,14 +8,36 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Inter:wght@400;500;600&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="landing.css">
-    <!-- Import Animation Library -->
+
+    <!-- PostHog analytics -->
+    <script>
+      !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="Ai Ri init Vi Yi Rr zi Gi Zi capture calculateEventProperties en register register_once register_for_session unregister unregister_for_session sn getFeatureFlag getFeatureFlagPayload getFeatureFlagResult isFeatureEnabled reloadFeatureFlags updateFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey cancelPendingSurvey canRenderSurvey canRenderSurveyAsync an identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset setIdentity clearIdentity get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException addExceptionStep captureLog startExceptionAutocapture stopExceptionAutocapture loadToolbar get_property getSessionProperty rn Ki createPersonProfile setInternalOrTestUser nn $i hn opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Xi debug Mr tn getPageViewId captureTraceFeedback captureTraceMetric Di".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+      posthog.init('phc_p8kDEr3JLzaWNdWzwWP7eVU7wXhMYKnmJSoAhqKb7cK6', {
+        api_host: 'https://us.i.posthog.com',
+        defaults: '2026-01-30',
+        person_profiles: 'identified_only',
+      });
+      posthog.register({
+        environment: location.hostname === 'localhost' ? 'dev' : 'prod',
+      });
+    </script>
+
+    <!-- Animation library -->
     <script src="CanvasAnimation.js"></script>
     <script src="DemoAnimationObject.js"></script>
     <script src="CloudMaker.js"></script>
     <script src="GameOfLife.js"></script>
+
+    <!-- Landing-page logic (loaded in head so globals + onclick handlers are
+         defined before the body's inline handlers can fire) -->
+    <script src="js/landing/cloud-scene.js"></script>
+    <script src="js/landing/hero-intro.js"></script>
+    <script src="js/landing/expand-page.js"></script>
+    <script src="js/landing/nav.js"></script>
+    <script src="js/landing/debug-actions.js"></script>
+
     <script>
-      /* Message */
-      msg = `
+      console.log(`
       Copyright © 2021 Yao Yiheng. All Rights Reserved
 
       [SPACE] => Toggle Animations (pause/unpause)
@@ -26,205 +48,7 @@
           'SHOW_DEMO = true': render animation demo object, a shape that orbits around mouse location.
           'flag_enable_night_mode = true': overlay a night-time mode.
       }
-      `;
-      console.log(msg);
-
-      let PLAY_ANIMATION = true;
-      let SHOW_DEMO = false;
-      let SHOW_GOL = true;
-      let PAUSE_TIME = 0;
-      let PAUSE_OFFSET = 0;
-      function getAnimationTime(){
-        return window.performance.now()+PAUSE_OFFSET;
-      }
-      // Global State variables
-      let flag_enable_night_mode = false;
-      const cur_hour = (new Date()).getHours();
-      const is_night_time = (cur_hour >= 20 || cur_hour < 6);
-
-      // Game Objects
-      const cloud_maker = CloudMaker();
-      const game_of_life = GameOfLife();
-      const demo_obj = makeDemoAnimationObject();
-      const game_of_life_grid = AnimationObject();
-
-      // Initialization
-      function initialize(){
-        if (flag_enable_night_mode){
-          document.getElementById('headline').style.color = "#FFFFFF";
-        }
-
-        // Set up game_of_life
-        game_of_life_grid.location = makePoint(0, window.innerHeight*0);
-        game_of_life.initialize(game_of_life_grid, window.innerWidth, window.innerHeight);
-      }
-
-      // Pending cursor animation
-      let isOdd = false;
-      const blinkInterval = setInterval(() => {
-        const mainDiv = document.getElementById('headline');
-        if (!mainDiv || mainDiv.dataset.transitioning) return;
-        const disp = 'Construction in Progress'+(isOdd?'_':'.');
-        mainDiv.innerHTML = disp;
-        isOdd = !isOdd;
-      }, 1000);
-
-      // After 4s, backspace and retype, then show arrow
-      setTimeout(() => {
-        const headline = document.getElementById('headline');
-        headline.dataset.transitioning = 'true';
-        clearInterval(blinkInterval);
-
-        const baseText = 'Construction in Progress.';
-        let i = baseText.length;
-        headline.innerHTML = baseText;
-
-        const backspaceId = setInterval(() => {
-          i--;
-          headline.innerHTML = baseText.substring(0, i) + '_';
-          if (i <= 0) {
-            clearInterval(backspaceId);
-            headline.innerHTML = '_';
-            setTimeout(typeNewMessage, 300);
-          }
-        }, 60);
-
-        function typeNewMessage() {
-          const msg = "Let's see what we've been working on!";
-          let j = 0;
-          const typeId = setInterval(() => {
-            j++;
-            headline.innerHTML = msg.substring(0, j) + (j % 2 === 0 ? '_' : '');
-            if (j >= msg.length) {
-              clearInterval(typeId);
-              headline.innerHTML = msg;
-              setTimeout(() => {
-                document.getElementById('scroll-arrow').classList.add('visible');
-              }, 600);
-            }
-          }, 50);
-        }
-      }, 4000);
-
-      // Collapse hero to 20vh strip and reveal blog
-      function expandPage() {
-        const hero = document.getElementById('hero');
-        const blog = document.getElementById('blog');
-        const arrow = document.getElementById('scroll-arrow');
-        const headline = document.getElementById('headline');
-        // Fade out arrow and headline immediately
-        arrow.classList.remove('visible');
-        headline.classList.add('fading');
-
-        // Collapse hero
-        hero.classList.add('collapsed');
-
-        // Hide headline once faded
-        setTimeout(() => {
-          headline.style.display = 'none';
-        }, 400);
-
-        // Blog appears as hero finishes collapsing; mount polar city once visible
-        setTimeout(() => {
-          blog.classList.add('visible');
-          if (window.__mountPolarCity) window.__mountPolarCity();
-        }, 700);
-      }
-
-      // Dissapate a cloud
-      function dissapateCloud(){
-        if (!PLAY_ANIMATION) return;
-        clouds.forEach(function(cloud){
-          if (cloud.isDissapated === true) return;
-          const mouse_obj = AnimationObject();
-          mouse_obj.location = mouse_location;
-          const did_intersect = cloud.shape.getCollider().doesIntersect(Cpoint(mouse_obj));
-          if (did_intersect === true){
-            cloud.isDissapated = true;
-            cloud_maker.explodeCloud(cloud);
-            setTimeout(function(){
-              clouds = clouds.filter((c) => c !== cloud);
-            }, 2000);
-          }
-        });
-      }
-
-      let x_lim = y_lim = 0;
-      let mouse_location = makePoint(0, 0);
-      window.onload = () => {
-        initialize();
-        resize();
-        const canvas = document.getElementById('canvas');
-        canvas.addEventListener('mousemove', (evt) => {
-          const mPos = getMousePos(canvas, evt);
-          mouse_location = makePoint(mPos.x, mPos.y);
-        });
-        document.body.onkeyup = function(e){
-          if(e.keyCode == 32){
-            PLAY_ANIMATION = !PLAY_ANIMATION;
-            if (PLAY_ANIMATION){
-              PAUSE_OFFSET += PAUSE_TIME - window.performance.now();
-              window.requestAnimationFrame(draw);
-            }
-            else {
-              PAUSE_TIME = window.performance.now();
-            }
-          }
-          else if (e.keyCode == 69){
-            clouds.forEach(function(cloud){
-              cloud.children.forEach((child) => child.velocity = makeVector(Math.random()-0.5, Math.random()-0.5));
-            });
-          }
-        };
-        canvas.addEventListener('click', dissapateCloud, false);
-        window.requestAnimationFrame(draw);
-      };
-      window.onresize = resize;
-      function resize(){
-        const canvas = document.getElementById('canvas');
-        if (canvas === null) return;
-        x_lim = canvas.width = window.innerWidth;
-        y_lim = canvas.height = window.innerHeight;
-        game_of_life_grid.location = makePoint(0, y_lim*0);
-        game_of_life.initialize(game_of_life_grid, x_lim, y_lim);
-      }
-      function getMousePos(canvas, evt) {
-        var rect = canvas.getBoundingClientRect();
-        return {
-          x: evt.clientX - rect.left,
-          y: evt.clientY - rect.top
-        };
-      }
-
-      let clouds = [];
-      let birds = [];
-      function draw() {
-        const ctx = document.getElementById('canvas').getContext('2d');
-        ctx.clearRect(0, 0, x_lim, y_lim);
-        clouds = clouds.filter((cloud) => cloud_maker.isOnScreen(cloud));
-        if (clouds.length < Math.round(x_lim/100)) clouds.push(cloud_maker.makeCloud());
-        clouds.forEach((cloud) => { cloud.animate(); cloud.draw(ctx); });
-        if (SHOW_GOL) {
-          game_of_life.play();
-          game_of_life_grid.animate();
-          game_of_life_grid.draw(ctx);
-        }
-        birds = birds.filter(b => b.location.x > -50 && b.location.x < x_lim+50 && b.location.y > -50);
-        birds.forEach(bird => { bird.animate(); bird.draw(ctx); });
-        if (SHOW_DEMO) {
-          const towardsMouse = mouse_location.subPoint(demo_obj.location);
-          demo_obj.velocity = demo_obj.velocity.addVector(towardsMouse.norm().mul(0.01));
-          demo_obj.animate();
-          demo_obj.draw(ctx);
-        }
-        if (flag_enable_night_mode){
-          ctx.fillStyle = 'rgba(32,12,32,0.5)';
-          ctx.fillRect(0, 0, x_lim, y_lim);
-        }
-        if (PLAY_ANIMATION) {
-          window.requestAnimationFrame(draw);
-        }
-      }
+      `);
     </script>
   </head>
   <body>
@@ -241,165 +65,29 @@
     <div id="blog">
       <div id="polar-city-bg"></div>
 
-      <!-- Sticky nav -->
-      <nav class="blog-nav-bar">
-        <div class="spine">
-          <a href="#" class="active" onclick="showSection('about', this); return false;">About</a>
-          <a href="#" onclick="showSection('projects', this); return false;">Projects</a>
-          <a href="#" onclick="showSection('writing', this); return false;">Writing</a>
-        </div>
-      </nav>
-
-      <!-- Writing -->
-      <section id="section-writing" class="blog-section">
-        <div class="spine">
-          <p class="section-label">03 / Writing</p>
-          <h2 class="section-title">Selected<br><span>Notes</span></h2>
-          <div class="section-rule"></div>
-          <ul class="post-list">
-            <li class="post-item">
-              <span class="post-date">Apr 2025</span>
-              <div class="post-body">
-                <div class="post-tags"><span class="tag">neuroscience</span><span class="tag">web</span></div>
-                <h3 class="post-title">Gambling Under Uncertainty: Implementing the Floden et al. Task</h3>
-                <p class="post-excerpt">A browser-based recreation of the 2008 decision-making paradigm — risky vs. safe choices under time pressure, with reaction time logging and CSV export.</p>
-                <a href="#" class="post-link">Read</a>
-              </div>
-            </li>
-            <li class="post-item">
-              <span class="post-date">Jan 2025</span>
-              <div class="post-body">
-                <div class="post-tags"><span class="tag">generative</span><span class="tag">graphics</span></div>
-                <h3 class="post-title">Conway's Game of Life as a Living Background</h3>
-                <p class="post-excerpt">Embedding cellular automata into a landing page — how a simple rule set of birth and death creates patterns complex enough to feel alive.</p>
-                <a href="#" class="post-link">Read</a>
-              </div>
-            </li>
-            <li class="post-item">
-              <span class="post-date">Aug 2024</span>
-              <div class="post-body">
-                <div class="post-tags"><span class="tag">graphics</span><span class="tag">architecture</span></div>
-                <h3 class="post-title">Building a Canvas Animation Engine from Scratch</h3>
-                <p class="post-excerpt">Scene graphs, composable animation functions, double-dispatch collision detection — the architecture behind the clouds drifting by above.</p>
-                <a href="#" class="post-link">Read</a>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- Projects -->
-      <section id="section-projects" class="blog-section">
-        <div class="spine">
-          <p class="section-label">02 / Projects</p>
-          <h2 class="section-title">Built<br><span>Things</span></h2>
-          <div class="section-rule"></div>
-          <div class="project-grid">
-            <div class="project-card">
-              <span class="project-index">01</span>
-              <h3 class="project-name">Gambling Task</h3>
-              <p class="project-desc">Browser implementation of the Floden et al. 2008 risky decision-making paradigm with real-time RT logging and CSV export.</p>
-              <div class="project-stack">
-                <span class="stack-tag">JavaScript</span>
-                <span class="stack-tag">Canvas 2D</span>
-              </div>
-              <a href="#" class="project-link">View</a>
-            </div>
-            <div class="project-card">
-              <span class="project-index">02</span>
-              <h3 class="project-name">Canvas Engine</h3>
-              <p class="project-desc">A lightweight 2D animation engine: scene graph, composable transforms, double-dispatch collision, and a pluggable draw pipeline.</p>
-              <div class="project-stack">
-                <span class="stack-tag">JavaScript</span>
-                <span class="stack-tag">Canvas API</span>
-              </div>
-              <a href="#" class="project-link">View</a>
-            </div>
-            <div class="project-card">
-              <span class="project-index">03</span>
-              <h3 class="project-name">Cloud Watcher</h3>
-              <p class="project-desc">This page. Procedurally generated clouds, Game of Life cellular automata, and a typewriter intro — all running on a single canvas.</p>
-              <div class="project-stack">
-                <span class="stack-tag">JavaScript</span>
-                <span class="stack-tag">HTML/CSS</span>
-              </div>
-              <a href="#" class="project-link">View</a>
-            </div>
-            <div class="project-card">
-              <span class="project-index">04</span>
-              <h3 class="project-name">More Soon</h3>
-              <p class="project-desc">Ongoing work in neural data analysis, computational modelling, and interactive visualization tools.</p>
-              <div class="project-stack">
-                <span class="stack-tag">Python</span>
-                <span class="stack-tag">R</span>
-                <span class="stack-tag">WebGL</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- About -->
-      <section id="section-about" class="blog-section active">
-        <div class="spine">
-          <p class="section-label">01 / About</p>
-          <h2 class="section-title">Yao<br><span>Yiheng</span></h2>
-          <div class="section-rule"></div>
-          <div class="about-grid">
-            <div class="about-body">
-              <p>I studied <strong>Symbolic Systems at Stanford</strong> — an interdisciplinary program spanning computation, cognition, linguistics, and philosophy. Before that I worked as a software engineer at <strong>Google</strong>. The throughline has always been: how do minds (human and artificial) represent and act on the world?</p>
-              <p>My work sits at the intersection of <strong>cognitive science</strong>, <strong>machine learning</strong>, and <strong>systems engineering</strong>. On the research side I think about human causal reasoning, decision-making under uncertainty, and what it takes to build AI systems that are reliably interpretable. On the engineering side I care about performance — from GPU kernel optimization to interactive browser graphics.</p>
-              <p>I'm drawn to problems where the theoretical and the practical are in genuine tension: why does a model behave this way, what can we actually measure, and how do we build something a person would want to use? This site is a sketchpad for that kind of thinking.</p>
-            </div>
-            <div class="about-sidebar">
-              <div class="about-block">
-                <div class="about-block-label">Research Interests</div>
-                <ul>
-                  <li>AI Alignment &amp; Interpretability</li>
-                  <li>Human-AI Collaboration</li>
-                  <li>Cognitive Science &amp; Decision Theory</li>
-                  <li>LLM Evaluation &amp; Behavior</li>
-                  <li>Generative Graphics</li>
-                </ul>
-              </div>
-              <div class="about-block">
-                <div class="about-block-label">Stack</div>
-                <ul>
-                  <li>Python / PyTorch / NumPy</li>
-                  <li>CUDA / Parallel Computing</li>
-                  <li>JavaScript / Canvas / WebGL</li>
-                  <li>R / tidyverse</li>
-                </ul>
-              </div>
-              <div class="about-block">
-                <div class="about-block-label">Background</div>
-                <ul>
-                  <li>Symbolic Systems, Stanford</li>
-                  <li>Software Engineer, Google</li>
-                  <li>Engineering Leadership</li>
-                  <li>Data Science &amp; ML Research</li>
-                </ul>
-              </div>
-              <div class="about-block">
-                <div class="about-block-label">Contact</div>
-                <ul>
-                  <li>GitHub</li>
-                  <li>Email</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer class="blog-footer">
-        <div class="spine">
-          <span class="footer-copy">© 2021–2025 Yao Yiheng</span>
-          <span class="footer-coords">Cloud Watcher  ·  SYS.01</span>
-        </div>
-      </footer>
-
+      <div data-component="blog-nav"></div>
+      <div data-page="blog-about"></div>
+      <div data-page="blog-research"></div>
+      <div data-page="blog-projects"></div>
+      <div data-page="blog-writing"></div>
+      <div data-component="blog-footer"></div>
     </div>
+
+    <!-- Claude Approved stamp — kept as component, rendered on a different page -->
+    <!--
+    <div class="stamp-sticker" onclick="this.classList.toggle('stamp-open')">
+      ...
+    </div>
+    -->
+    <div data-component="debug-toolbar"></div>
+
+    <!-- Inject HTML page fragments. Runs after placeholders are in DOM; the
+         long typewriter intro gives the fetches plenty of time to finish
+         before the user reveals the blog. -->
+    <script src="js/landing/page-loader.js"></script>
+    <script type="module" src="js/landing/research-render.js"></script>
+    <script type="module" src="js/landing/projects-render.js"></script>
+    <script type="module" src="js/landing/writing-render.js"></script>
 
     <script type="module">
       import { mountPolarCity, preloadAssets } from './js/polar_city/main.js';
@@ -410,56 +98,14 @@
         asBackground: false,
         backgroundAlpha: 0,
         scale: 0.5,
-        worldSize: { cols: 40, rows: 40 },
       };
 
-      // Start streaming assets immediately while the hero animation plays.
       const assetsReady = preloadAssets(POLAR_CITY_OPTS);
 
-      // Mount once the blog is revealed — assets will already be cached.
-      window.__mountPolarCity = () => assetsReady.then(() => mountPolarCity('#polar-city-bg', POLAR_CITY_OPTS));
+      // Mount target is #polar-stage — a layer inserted behind the cloud
+      // canvas during the wipe transition (see expandPage).
+      window.__mountPolarCity = () =>
+        assetsReady.then(() => mountPolarCity('#polar-stage', POLAR_CITY_OPTS));
     </script>
-
-    <script>
-      function showSection(name, el) {
-        document.querySelectorAll('.blog-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.blog-nav-bar a').forEach(a => a.classList.remove('active'));
-        document.getElementById('section-' + name).classList.add('active');
-        el.classList.add('active');
-        document.getElementById('blog').scrollTop = 0;
-      }
-    </script>
-
-    <!-- Claude Approved stamp — kept as component, rendered on a different page -->
-    <!--
-    <div class="stamp-sticker" onclick="this.classList.toggle('stamp-open')">
-      ...
-    </div>
-    -->
-    <div class="debug-toolbar">
-      <button class="debug-toggle" onclick="this.parentElement.classList.toggle('open')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      </button>
-      <div class="debug-items">
-        <div class="debug-item">
-          <span class="debug-label">Cells</span>
-          <button class="debug-icon-btn active" title="Game of Life" onclick="SHOW_GOL = !SHOW_GOL; this.classList.toggle('active')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-          </button>
-        </div>
-        <div class="debug-item">
-          <span class="debug-label">Night</span>
-          <button class="debug-icon-btn" title="Night Mode" onclick="flag_enable_night_mode = !flag_enable_night_mode; this.classList.toggle('active'); if(flag_enable_night_mode){document.getElementById('headline').style.color='#FFFFFF'}else{document.getElementById('headline').style.color=''}">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          </button>
-        </div>
-        <div class="debug-item">
-          <span class="debug-label">Boom</span>
-          <button class="debug-icon-btn" title="Explode All Clouds" onclick="if(this.dataset.cooldown) return; clouds.forEach(c => { if(!c.isDissapated){ c.isDissapated=true; cloud_maker.explodeCloud(c); } }); setTimeout(()=>{ clouds=[]; }, 2000); this.dataset.cooldown=1; this.classList.add('cooldown'); const b=this; setTimeout(()=>{ delete b.dataset.cooldown; b.classList.remove('cooldown'); }, 3000);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
   </body>
 </html>
