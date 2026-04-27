@@ -1,22 +1,45 @@
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8">
     <title>Cloud Watcher</title>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Inter:wght@400;500;600&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="landing.css">
-    <!-- Import Animation Library -->
+
+    <!-- PostHog analytics -->
+    <script>
+      !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="Ai Ri init Vi Yi Rr zi Gi Zi capture calculateEventProperties en register register_once register_for_session unregister unregister_for_session sn getFeatureFlag getFeatureFlagPayload getFeatureFlagResult isFeatureEnabled reloadFeatureFlags updateFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey cancelPendingSurvey canRenderSurvey canRenderSurveyAsync an identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset setIdentity clearIdentity get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException addExceptionStep captureLog startExceptionAutocapture stopExceptionAutocapture loadToolbar get_property getSessionProperty rn Ki createPersonProfile setInternalOrTestUser nn $i hn opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Xi debug Mr tn getPageViewId captureTraceFeedback captureTraceMetric Di".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+      posthog.init('phc_p8kDEr3JLzaWNdWzwWP7eVU7wXhMYKnmJSoAhqKb7cK6', {
+        api_host: 'https://us.i.posthog.com',
+        defaults: '2026-01-30',
+        person_profiles: 'identified_only',
+      });
+      posthog.register({
+        environment: location.hostname === 'localhost' ? 'dev' : 'prod',
+      });
+    </script>
+
+    <!-- Animation library -->
     <script src="CanvasAnimation.js"></script>
     <script src="DemoAnimationObject.js"></script>
     <script src="CloudMaker.js"></script>
     <script src="GameOfLife.js"></script>
+
+    <!-- Landing-page logic (loaded in head so globals + onclick handlers are
+         defined before the body's inline handlers can fire) -->
+    <script src="js/landing/cloud-scene.js"></script>
+    <script src="js/landing/hero-intro.js"></script>
+    <script src="js/landing/expand-page.js"></script>
+    <script src="js/landing/nav.js"></script>
+    <script src="js/landing/debug-actions.js"></script>
+
     <script>
-      /* Message */
-      msg = `
+      console.log(`
       Copyright © 2021 Yao Yiheng. All Rights Reserved
-      
+
       [SPACE] => Toggle Animations (pause/unpause)
       [CLICK] => {
           cloud: dissapate them!
@@ -25,171 +48,64 @@
           'SHOW_DEMO = true': render animation demo object, a shape that orbits around mouse location.
           'flag_enable_night_mode = true': overlay a night-time mode.
       }
-      `;
-      console.log(msg);
-
-      let PLAY_ANIMATION = true;
-      let SHOW_DEMO = false;
-      let PAUSE_TIME = 0;
-      let PAUSE_OFFSET = 0;
-      function getAnimationTime(){
-        return window.performance.now()+PAUSE_OFFSET;
-      }
-      // Global State variables
-      let flag_enable_night_mode = false;
-      const cur_hour = (new Date()).getHours();
-      const is_night_time = (cur_hour >= 20 || cur_hour < 6);
-
-      // Game Objects
-      const cloud_maker = CloudMaker();
-      const game_of_life = GameOfLife();
-      const demo_obj = makeDemoAnimationObject();
-      const game_of_life_grid = AnimationObject();
-
-      // Initialization
-      function initialize(){
-        if (is_night_time && flag_enable_night_mode){
-          document.getElementById('headline').style.color = "#FFFFFF";
-        }
-
-        // Set up game_of_life
-        game_of_life_grid.location = makePoint(0, window.innerHeight*0);
-        game_of_life.initialize(game_of_life_grid, window.innerWidth, window.innerHeight);
-      }
-
-      // Pending cursor animation
-      let isOdd=false;
-      setInterval(() => {
-        const mainDiv = document.getElementById('headline');
-        const disp = 'Construction in Progress'+(isOdd?'_':'.');
-        mainDiv.innerHTML = disp;
-        isOdd=!isOdd;
-      }, 1000);
-
-      // Dissapate a cloud
-      function dissapateCloud(){
-        if (!PLAY_ANIMATION) return;
-        clouds.forEach(function(cloud){
-          if (cloud.isDissapated === true) return;
-          const mouse_obj = AnimationObject();
-          mouse_obj.location = mouse_location;
-          const did_intersect = cloud.shape.getCollider().doesIntersect(Cpoint(mouse_obj));
-          if (did_intersect === true){
-            cloud.isDissapated = true;
-            cloud_maker.explodeCloud(cloud);
-            setTimeout(function(){
-              clouds = clouds.filter((c) => c !== cloud);
-            }, 2000);
-          }
-        });
-      }
-
-      /* 
-       * Cloud Generator and Left->Right floating animation.
-       *
-       * Dynamic random generation of cloud y-position, speed,
-       * shape using clusters of circles.
-       */
-      let x_lim = y_lim = 0;
-      let mouse_location = makePoint(0, 0);
-      // Canvas resizing/init boundaries
-      window.onload = () => {
-        initialize();
-        resize();
-        const canvas = document.getElementById('canvas');
-        canvas.addEventListener('mousemove', (evt) => {
-          const mPos = getMousePos(canvas, evt);
-          mouse_location = makePoint(mPos.x, mPos.y);
-        });
-        document.body.onkeyup = function(e){
-          if(e.keyCode == 32){
-            PLAY_ANIMATION = !PLAY_ANIMATION;
-            if (PLAY_ANIMATION){
-              PAUSE_OFFSET += PAUSE_TIME - window.performance.now();
-              window.requestAnimationFrame(draw);
-            }
-            else {
-              PAUSE_TIME = window.performance.now();
-            }
-            console.debug(`Play Animations: ${PLAY_ANIMATION}. Monotonic Time: ${window.performance.now()}`);
-          }
-          else if (e.keyCode == 69){
-            clouds.forEach(function(cloud){
-              cloud.children.forEach((child) => child.velocity = makeVector(Math.random()-0.5, Math.random()-0.5));
-            });
-          }
-        };
-        canvas.addEventListener('click', dissapateCloud, false);
-        // Register frame renderer
-        window.requestAnimationFrame(draw);
-      };
-      window.onresize = resize;
-      function resize(){
-        const canvas = document.getElementById('canvas');
-        if (canvas === null) return;
-        x_lim = canvas.width = window.innerWidth;
-        y_lim = canvas.height = window.innerHeight;
-
-        // Reset game_of_life
-        game_of_life_grid.location = makePoint(0, y_lim*0);
-        game_of_life.initialize(game_of_life_grid, x_lim, y_lim);
-      }
-      // Computes the position of mouse relative to canvas obj
-      function getMousePos(canvas, evt) {
-        var rect = canvas.getBoundingClientRect();
-        return {
-          x: evt.clientX - rect.left,
-          y: evt.clientY - rect.top
-        };
-      }
-      
-      /* Frame Animation */
-      let clouds = [];
-      function draw() {
-        const ctx = document.getElementById('canvas').getContext('2d');
-        // Clear previous frame
-        ctx.clearRect(0, 0, x_lim, y_lim);
-
-        // Remove clouds
-        clouds = clouds.filter((cloud) => cloud_maker.isOnScreen(cloud));
-
-        // Generate clouds
-        if (clouds.length < Math.round(x_lim/100)) clouds.push(cloud_maker.makeCloud());
-
-        // Draw clouds
-        clouds.forEach((cloud) => {
-          cloud.animate();
-          cloud.draw(ctx);
-        });
-
-        // Play the Game Of Life Grid
-        game_of_life.play();
-        game_of_life_grid.animate();
-        game_of_life_grid.draw(ctx);
-
-        // Draw Demo object
-        if (SHOW_DEMO) {
-          const towardsMouse = mouse_location.subPoint(demo_obj.location);
-          demo_obj.velocity = demo_obj.velocity.addVector(towardsMouse.norm().mul(0.01));
-          demo_obj.animate();
-          demo_obj.draw(ctx);
-        }
-        
-        // Dark overlay (night-mode)
-        if (is_night_time && flag_enable_night_mode){
-          ctx.fillStyle = 'rgba(32,12,32,0.5)';
-          ctx.fillRect(0, 0, x_lim, y_lim); 
-        }
-        if (PLAY_ANIMATION) {
-          window.requestAnimationFrame(draw);
-        }
-      }
+      `);
     </script>
   </head>
   <body>
-    <div class="callout">
-      <canvas id="canvas" width="100%" height="100%"></canvas>
-      <h1 id="headline" class="nowrap" style="position:absolute;">...</h1>
+    <div id="hero">
+      <div class="callout">
+        <canvas id="canvas" width="100%" height="100%"></canvas>
+        <h1 id="headline" class="nowrap" style="position:absolute;">...</h1>
+      </div>
+      <button id="scroll-arrow" onclick="expandPage()" aria-label="Explore">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
     </div>
+
+    <div id="blog">
+      <div id="polar-city-bg"></div>
+
+      <div data-component="blog-nav"></div>
+      <div data-page="blog-about"></div>
+      <div data-page="blog-research"></div>
+      <div data-page="blog-projects"></div>
+      <div data-page="blog-writing"></div>
+      <div data-component="blog-footer"></div>
+    </div>
+
+    <!-- Claude Approved stamp — kept as component, rendered on a different page -->
+    <!--
+    <div class="stamp-sticker" onclick="this.classList.toggle('stamp-open')">
+      ...
+    </div>
+    -->
+    <div data-component="debug-toolbar"></div>
+
+    <!-- Inject HTML page fragments. Runs after placeholders are in DOM; the
+         long typewriter intro gives the fetches plenty of time to finish
+         before the user reveals the blog. -->
+    <script src="js/landing/page-loader.js"></script>
+    <script type="module" src="js/landing/research-render.js"></script>
+    <script type="module" src="js/landing/projects-render.js"></script>
+    <script type="module" src="js/landing/writing-render.js"></script>
+
+    <script type="module">
+      import { mountPolarCity, preloadAssets } from './js/polar_city/main.js';
+
+      const POLAR_CITY_OPTS = {
+        assetsBase: 'img/polar_city',
+        poseScalesUrl: '/js/polar_city/pose_scales.json',
+        asBackground: false,
+        backgroundAlpha: 0,
+        scale: 0.5,
+      };
+
+      const assetsReady = preloadAssets(POLAR_CITY_OPTS);
+
+      // Mount target is #polar-stage — a layer inserted behind the cloud
+      // canvas during the wipe transition (see expandPage).
+      window.__mountPolarCity = () =>
+        assetsReady.then(() => mountPolarCity('#polar-stage', POLAR_CITY_OPTS));
+    </script>
   </body>
 </html>

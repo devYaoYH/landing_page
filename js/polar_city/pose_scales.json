@@ -1,0 +1,35 @@
+{
+  "_comment": "Single source of truth for per-pose sprite scales and action→pose mapping. Consumed by both the JS engine (main.js) and the Python preview (test/polar_city/preview_animations.py). Edit here, rerun the preview, reload the browser.",
+  "pose_scales": {
+    "walk": 1.00,
+    "sit":  0.85,
+    "chocolate": 0.85,
+    "coffee": 0.85,
+    "fish": 0.85,
+    "play_ball": 0.85,
+    "sleep": 0.85
+  },
+  "_pose_loop_comment": "Poses listed as false settle on their last frame instead of looping. Omitted poses default to looping.",
+  "pose_loop": {
+    "coffee": false,
+    "sleep": false
+  },
+  "action_pose": {
+    "action_01": "sit",
+    "action_13": "sit",
+    "action_03": "chocolate",
+    "action_16": "chocolate",
+    "action_17": "chocolate",
+    "action_04": "coffee",
+    "action_05": "coffee",
+    "action_18": "fish",
+    "action_06": "fish",
+    "action_08": "play_ball",
+    "action_09": "play_ball",
+    "action_10": "play_ball",
+    "action_19": "play_ball",
+    "action_20": "play_ball",
+    "action_14": "sleep",
+    "action_15": "sleep"
+  }
+}

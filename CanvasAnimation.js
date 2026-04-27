@@ -1,3 +1,27 @@
+/*
+ * CanvasAnimation.js — lightweight 2D scene graph for HTML Canvas
+ *
+ * Usage:
+ *   1. Create animation objects with makeAnimationObject(location, drawFn, animateFn).
+ *      drawFn(ctx, location) paints the object; animateFn(dt) updates its state.
+ *
+ *   2. Compose a scene by nesting objects via makeGroup([...children]).
+ *      Transforms (Atranslate, Ascale, Arotate) propagate down the tree each frame.
+ *
+ *   3. Run the loop:
+ *        const scene = makeGroup([obj1, obj2, ...]);
+ *        function loop(ts) {
+ *          ctx.clearRect(0, 0, canvas.width, canvas.height);
+ *          scene.animate(delta);
+ *          scene.draw(ctx);
+ *          requestAnimationFrame(loop);
+ *        }
+ *        requestAnimationFrame(loop);
+ *
+ *   4. Collision detection: use checkCollision(shapeA, shapeB) for circle/rect pairs.
+ *      Attach an onCollide(other) handler to an object to respond to hits.
+ */
+
 // 2D Mathematical Objects
 function makePoint(ix, iy){
   return {
@@ -45,7 +69,7 @@ function makeVector(vx, vy){
     },
     // Dot product between 2D vectors
     dot: function(v){
-      return this.x*v.x + this.y*v.x;
+      return this.x*v.x + this.y*v.y;
     },
     // Unit vector representation
     norm: function(){
@@ -138,6 +162,7 @@ function Cpoint(animationObject){
       return collider.doesIntersectPoint(this);
     },
     // Point - Point intersection
+    // TODO: uses exact equality — switch to epsilon comparison if used with floats
     doesIntersectPoint: function(collider){
       return (this.getLocation().x == collider.getLocation().x && this.getLocation().y == collider.getLocation().y);
     },
@@ -165,7 +190,7 @@ function Cellipse(animationObject, radiusX, radiusY, rotation, startAngle, endAn
       return phi;
     },
     getArc: function(){
-      return (minAlpha, maxAlpha);
+      return [minAlpha, maxAlpha];
     },
     // Double Dispatch
     doesIntersect: function(collider){
@@ -261,7 +286,7 @@ function Darc(animationObject, radiusX, radiusY, rotation, startAngle, endAngle,
 
 // Constructor for animation object
 const AnimationObject = (function(parent = null){
-  animationObject = {
+  const animationObject = {
     parent: parent, // Parent object in animation hierarchy (null => canvas)
     scale: makePoint(1,1), // Size transformation scaling
     rgba: [255,255,255,1], // RGB + Opacity of object [0,1]
