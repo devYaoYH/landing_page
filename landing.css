@@ -48,6 +48,7 @@ body {
    ════════════════════════════════════════════ */
 #hero {
   flex: 0 0 100vh;
+  flex-basis: 100dvh;
   position: relative;
   overflow: hidden;
   background: url(img/polar_landing_helmet_cc-01.png) no-repeat center top;
@@ -78,11 +79,12 @@ canvas {
 }
 h1 {
   font-family: var(--font-mono);
-  font-size: 3em;
+  font-size: clamp(1.25rem, 6vw, 3em);
   color: #000;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 92vw;
+  text-align: center;
   z-index: 1;
 }
 #headline.fading {
