@@ -24,7 +24,7 @@ setTimeout(() => {
     if (i <= 0) {
       clearInterval(backspaceId);
       headline.innerHTML = '_';
-      setTimeout(typeNewMessage, 300);
+      setTimeout(typeNewMessage, 200);
     }
   }, 60);
 
@@ -38,9 +38,16 @@ setTimeout(() => {
         clearInterval(typeId);
         headline.innerHTML = msg;
         setTimeout(() => {
-          document.getElementById('scroll-arrow').classList.add('visible');
-        }, 600);
+          const arrow = document.getElementById('scroll-arrow');
+          arrow.classList.add('visible');
+          window.addEventListener('wheel', function onScroll(e) {
+            if (e.deltaY > 0 && arrow.classList.contains('visible')) {
+              window.removeEventListener('wheel', onScroll);
+              expandPage();
+            }
+          }, { passive: true });
+        }, 500);
       }
     }, 50);
   }
-}, 4000);
+}, 2000);
