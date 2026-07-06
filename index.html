@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -17,6 +18,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Inter:wght@400;500;600&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="preload" as="image" href="img/polar_landing_helmet_cc-01.png">
     <link rel="stylesheet" href="landing.css">
 
     <!-- PostHog analytics -->
@@ -41,7 +43,7 @@
       </div>
     </div>
 
-    <div id="blog" class="visible">
+    <div id="blog">
       <div id="polar-city-bg"></div>
 
       <div data-component="blog-nav"></div>
@@ -56,6 +58,22 @@
     <script type="module" src="js/landing/research-render.js"></script>
     <script type="module" src="js/landing/projects-render.js"></script>
     <script type="module" src="js/landing/writing-render.js"></script>
+
+    <!-- Reveal the blog only once every fragment is injected (and fonts have
+         had a moment to settle) so content fades in as one piece instead of
+         fragments popping in one by one. Registered after the render modules
+         so their fragmentsReady callbacks have already populated the lists. -->
+    <script type="module">
+      const fontsSettled = Promise.race([
+        document.fonts.ready,
+        new Promise((resolve) => setTimeout(resolve, 800)),
+      ]);
+      Promise.all([window.fragmentsReady, fontsSettled]).then(() => {
+        requestAnimationFrame(() => {
+          document.getElementById('blog').classList.add('visible');
+        });
+      });
+    </script>
 
     <script type="module">
       import { mountPolarCity, preloadAssets } from './js/polar_city/main.js';

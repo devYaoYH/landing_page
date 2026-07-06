@@ -33,6 +33,7 @@ html, body {
   padding: 0 !important;
   height: 100%;
   overflow: hidden;
+  background: var(--color-frost);
   -webkit-font-smoothing: antialiased;
 }
 body {
@@ -51,7 +52,9 @@ body {
   flex-basis: 100dvh;
   position: relative;
   overflow: hidden;
-  background: url(img/polar_landing_helmet_cc-01.png) no-repeat center top;
+  /* Frost fallback keeps a slow image load from flashing a jarring color
+     before the PNG paints. */
+  background: var(--color-frost) url(img/polar_landing_helmet_cc-01.png) no-repeat center top;
   background-size: cover;
   transition: flex-basis 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
