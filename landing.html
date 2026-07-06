@@ -3,15 +3,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Yiheng Yao</title>
-    <meta name="description" content="Yiheng Yao — AI researcher at Stanford studying multi-agent coordination, explainability, and cognitive science.">
-    <meta name="author" content="Yiheng Yao">
-    <meta property="og:title" content="Yiheng Yao — AI Researcher">
-    <meta property="og:description" content="Multi-agent coordination, explainability, and cognitive science at Stanford.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://yaoyiheng.com">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Yiheng Yao — AI Researcher">
-    <meta name="twitter:description" content="Multi-agent coordination, explainability, and cognitive science at Stanford.">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,55 +23,44 @@
       });
     </script>
 
-    <script src="js/landing/nav.js"></script>
+    <!-- Animation library -->
+    <script src="CanvasAnimation.js"></script>
+    <script src="DemoAnimationObject.js"></script>
+    <script src="CloudMaker.js"></script>
+    <script src="GameOfLife.js"></script>
+
+    <!-- Landing-page logic (loaded in head so globals + onclick handlers are
+         defined before the body's inline handlers can fire) -->
+    <script src="js/landing/cloud-scene.js"></script>
+    <script src="js/landing/hero-intro.js"></script>
+    <script src="js/landing/debug-actions.js"></script>
+
+    <script>
+      console.log(`
+      Copyright © 2021 Yao Yiheng. All Rights Reserved
+
+      [SPACE] => Toggle Animations (pause/unpause)
+      [CLICK] => {
+          cloud: dissapate them!
+      }
+      [CONSOLE CMD] => {
+          'SHOW_DEMO = true': render animation demo object, a shape that orbits around mouse location.
+          'flag_enable_night_mode = true': overlay a night-time mode.
+      }
+      `);
+    </script>
   </head>
   <body>
-    <div id="hero" class="collapsed">
+    <div id="hero">
       <div class="callout">
-        <div id="polar-stage"></div>
+        <canvas id="canvas" width="100%" height="100%"></canvas>
+        <h1 id="headline" class="nowrap" style="position:absolute;">...</h1>
       </div>
+      <button id="scroll-arrow" onclick="window.location.href='/'" aria-label="Explore">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
     </div>
 
-    <div id="blog" class="visible">
-      <div id="polar-city-bg"></div>
-
-      <div data-component="blog-nav"></div>
-      <div data-page="blog-about"></div>
-      <div data-page="blog-research"></div>
-      <div data-page="blog-projects"></div>
-      <div data-page="blog-writing"></div>
-      <div data-component="blog-footer"></div>
-    </div>
-
-    <script src="js/landing/page-loader.js"></script>
-    <script type="module" src="js/landing/research-render.js"></script>
-    <script type="module" src="js/landing/projects-render.js"></script>
-    <script type="module" src="js/landing/writing-render.js"></script>
-
-    <script type="module">
-      import { mountPolarCity, preloadAssets } from './js/polar_city/main.js';
-
-      const POLAR_CITY_OPTS = {
-        assetsBase: 'img/polar_city',
-        poseScalesUrl: '/js/polar_city/pose_scales.json',
-        asBackground: false,
-        backgroundAlpha: 0,
-        scale: 0.5,
-      };
-
-      const mount = () => preloadAssets(POLAR_CITY_OPTS).then(() => {
-        mountPolarCity('#polar-stage', POLAR_CITY_OPTS);
-        const stage = document.getElementById('polar-stage');
-        const observer = new MutationObserver(() => {
-          const canvas = stage.querySelector('canvas');
-          if (canvas) {
-            observer.disconnect();
-            requestAnimationFrame(() => canvas.classList.add('ready'));
-          }
-        });
-        observer.observe(stage, { childList: true, subtree: true });
-      });
-      (window.requestIdleCallback || setTimeout)(mount);
-    </script>
+    <div data-component="debug-toolbar"></div>
   </body>
 </html>
