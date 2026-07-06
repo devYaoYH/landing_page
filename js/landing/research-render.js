@@ -9,9 +9,10 @@ function entryHtml(r) {
   const tags = (r.tags || [])
     .map((t) => `<span class="research-tag">${escape(t)}</span>`)
     .join('');
-  const link = r.link
-    ? `<a href="${escape(r.link.href)}" class="research-link" target="_blank" rel="noopener">${escape(r.link.label)} ↗</a>`
-    : '';
+  const links = (r.links || (r.link ? [r.link] : []))
+    .map((l) => `<a href="${escape(l.href)}" class="research-link" target="_blank" rel="noopener">${escape(l.label)} ↗</a>`)
+    .join('');
+  const linkRow = links ? `<div class="research-links">${links}</div>` : '';
   const meta = [r.lab, r.date].filter(Boolean).map(escape).join(' · ');
 
   return `<li class="research-entry">
@@ -19,7 +20,7 @@ function entryHtml(r) {
     <div class="research-meta">${meta}</div>
     ${paragraphs(r.description, 'research-prose')}
     <div class="research-tags">${tags}</div>
-    ${link}
+    ${linkRow}
   </li>`;
 }
 

@@ -5,7 +5,8 @@
      date        — string, e.g. "2026 — ongoing"
      tags        — array of short strings (rendered small / muted)
      description — string; blank line (\n\n) splits into paragraphs
-     link        — { href, label }, optional. */
+     links       — array of { href, label }, optional
+                   (a single `link` object is also accepted). */
 
 export const research = [
   {
@@ -13,11 +14,34 @@ export const research = [
     lab: 'Stanford — Social Interaction Lab',
     date: '2026 — ongoing',
     tags: ['multi-agent', 'LLMs', 'negotiation'],
-    description: `Designed an iterated multi-turn negotiation game to study dynamic grounding in LLM agent dyads. 720 game traces across three frontier models reveal that agents consistently fail to coordinate despite individually solving the task — failures traced to perfunctory fairness, proposal anchoring, and commitment violations.`,
-    link: {
-      href: 'https://drive.google.com/file/d/1VnT8yGx7xDepawply9VKND9cxO5QQQBW/view?usp=sharing',
-      label: 'Paper (COLM 2026, under review)',
-    },
+    description: `Designed an iterated multi-turn negotiation game to study dynamic grounding in LLM agent dyads. 720 game traces across three frontier models reveal that agents consistently fail to coordinate despite individually solving the task — failures traced to perfunctory fairness, proposal anchoring, and commitment violations. Accepted at the ICML 2026 FAGEN and LM4Plan workshops.`,
+    links: [
+      {
+        href: 'https://drive.google.com/file/d/1VnT8yGx7xDepawply9VKND9cxO5QQQBW/view?usp=sharing',
+        label: 'Paper (ICML 2026 Workshops)',
+      },
+      {
+        href: 'https://fagen-workshop.github.io/',
+        label: 'FAGEN',
+      },
+      {
+        href: 'https://llmforplanning.github.io/ICML26/',
+        label: 'LM4Plan',
+      },
+    ],
+  },
+  {
+    question: `When an autonomous AI agent causes harm, who should the law hold responsible?`,
+    lab: 'Independent',
+    date: '2026',
+    tags: ['AI policy', 'tort law', 'agents'],
+    description: `Proposed an interaction-based framework for agentic tort liability, grounded in Bratman's planning theory of shared agency. Human-AI interaction logs distinguish autonomous drift, pure tool use, and collaborative planning — each mapping onto existing tort doctrine — and a "Reasonable Agent Standard" (constraint verification, epistemic transparency, runtime grounding, forensic logging) anchors developer duty of care.`,
+    links: [
+      {
+        href: 'https://arxiv.org/abs/2606.00518',
+        label: 'Paper (arXiv)',
+      },
+    ],
   },
   {
     question: `When do people blame a person, and when do they blame the situation?`,
