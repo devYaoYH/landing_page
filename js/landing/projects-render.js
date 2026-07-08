@@ -33,7 +33,7 @@ function entryHtml(p, i) {
   if (p.youtube) {
     media = `<div class="project-media-cell"><div class="project-media project-media--video"><iframe src="https://www.youtube-nocookie.com/embed/${escape(p.youtube)}" title="${escape(p.title)}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>${stamp}</div></div>`;
   } else if (p.image) {
-    media = `<div class="project-media-cell"><${mediaTag} class="project-media${p.link ? ' project-media--linked' : ''}"${linkAttr}><img src="${escape(p.image)}" alt="${escape(p.title)}" onerror="this.style.display='none'">${stamp}</${mediaTag}></div>`;
+    media = `<div class="project-media-cell"><${mediaTag} class="project-media${p.link ? ' project-media--linked' : ''}"${linkAttr}><img src="${escape(p.image)}" alt="${escape(p.title)}" loading="lazy" decoding="async" onerror="this.style.display='none'">${stamp}</${mediaTag}></div>`;
   } else {
     media = `<div class="project-media-cell"></div>`;
   }

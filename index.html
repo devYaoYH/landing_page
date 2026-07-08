@@ -19,6 +19,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Inter:wght@400;500;600&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="preload" as="image" href="img/polar_landing_helmet_cc-01.png">
+    <!-- Kick off fragment fetches with the HTML parse instead of waiting for
+         page-loader.js to execute (saves a network round trip on cold load). -->
+    <link rel="preload" as="fetch" crossorigin href="components/blog-nav.html">
+    <link rel="preload" as="fetch" crossorigin href="pages/blog-about.html">
+    <link rel="preload" as="fetch" crossorigin href="pages/blog-research.html">
+    <link rel="preload" as="fetch" crossorigin href="pages/blog-projects.html">
+    <link rel="preload" as="fetch" crossorigin href="pages/blog-writing.html">
+    <link rel="preload" as="fetch" crossorigin href="components/blog-footer.html">
     <link rel="stylesheet" href="landing.css">
 
     <!-- PostHog analytics -->
@@ -66,7 +74,7 @@
     <script type="module">
       const fontsSettled = Promise.race([
         document.fonts.ready,
-        new Promise((resolve) => setTimeout(resolve, 800)),
+        new Promise((resolve) => setTimeout(resolve, 300)),
       ]);
       Promise.all([window.fragmentsReady, fontsSettled]).then(() => {
         requestAnimationFrame(() => {

@@ -22,7 +22,7 @@ export const projects = [
     tags: ['LLMs', 'evaluation', 'IRT', 'agent benchmarks'],
     description: `A Multidimensional Item Response Theory model fitted on the public HAL leaderboard dataset — 13 harnesses, 36 models, 1,796 tasks. Identifies maximally discriminating tasks per benchmark, cutting evaluation costs by 40-44% while maintaining ability-estimation accuracy. Feature-informed priors enable cold-start performance prediction for novel scaffold × model combinations never seen during training.`,
     link: { href: 'https://devyaoyh.github.io/hal-harness-plus-plus/', label: 'Demo' },
-    image: 'img/hal_irt.png',
+    image: 'img/hal_irt.webp',
   },
   {
     title: 'Samwise Flight Software',
@@ -30,7 +30,7 @@ export const projects = [
     tags: ['embedded', 'C', 'Python', 'satellites'],
     description: `Software team lead for Stanford Student Space Initiative. Ran the program end-to-end — feature scoping, task allocation, cross-team coordination — leading ~8 engineers against a 9-month deadline to ship a new flight OS for a CubeSat. Primary technical work on the codebase architecture for testing custom embedded OS, including remote hardware-in-the-loop, integration with the TinyGS ground station network, and designing an OTA (over-the-air) Update protocol from scratch.`,
     link: { href: 'https://github.com/stanford-ssi/samwise-flight-software', label: 'Source' },
-    image: 'img/samwise_satellite.jpg',
+    image: 'img/samwise_satellite.webp',
   },
   {
     title: 'Anyplot',
@@ -38,7 +38,7 @@ export const projects = [
     tags: ['LLMs', 'privacy', 'data visualization'],
     description: `Privacy-forward dataset exploration tool — all the goodness of modern agentic coding systems without leaking your dataset. CSV uploads are filtered locally via SQL before a differential privacy layer masks sensitive information sent to Claude, which then generates visualization code executed in a sandboxed subprocess. React frontend, FastAPI backend, MCP-based privacy engine.`,
     link: { href: 'https://devyaoyh.github.io/anyplot/', label: 'Demo' },
-    image: 'img/anyplot_full_app.png',
+    image: 'img/anyplot_full_app.webp',
   },
   {
     title: 'Do LLMs Mirror Human Morality?',
@@ -49,7 +49,7 @@ export const projects = [
       href: 'https://github.com/devYaoYH/TETHICON-moral-machines/blob/main/presentation/TETHICON%202025%20Moral%20Machines%20Redux.pdf',
       label: 'Poster',
     },
-    image: 'img/moral_machines_redux.png',
+    image: 'img/moral_machines_redux.webp',
   },
   {
     title: 'Cloud Watcher',
