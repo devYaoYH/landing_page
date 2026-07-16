@@ -18,7 +18,11 @@ export const research = [
     links: [
       {
         href: 'https://arxiv.org/abs/2605.01750',
-        label: 'Paper (ICML 2026 Workshops)',
+        label: 'Paper (COLM 2026)',
+      },
+      {
+        href: 'https://drive.google.com/file/d/1t_SLQuxbXKQcHh1JAdci6-mPOJi3eSW_/view?usp=sharing',
+        label: 'Poster (ICML 2026)',
       },
       {
         href: 'https://fagen-workshop.github.io/',
