@@ -9,6 +9,16 @@
 
 export const projects = [
   {
+    title: 'Allod',
+    date: '2026',
+    tags: ['self-hosting', 'infrastructure', 'security'],
+    description: `Your personal corner of the internet, digital walled-garden with your very own software development team ready to cook up whatever apps/tools you should want. Your data stays on hardware you control. Security by structure: deterministic policy enforcement and network isolation give you the personal-assistant features of OpenClaw without the security nightmare.
+
+Shape technology to your interaction patterns. Technology shouldn't shape how you interact.`,
+    link: { href: 'https://github.com/devYaoYH/allod', label: 'Source' },
+    image: 'img/geth_dashboard.webp',
+  },
+  {
     title: 'Mnemosyne',
     date: '2026',
     tags: ['LLMs', 'HCI', 'memory systems'],
